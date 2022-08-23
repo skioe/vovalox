@@ -4,7 +4,7 @@ import random
 from vk_api.utils import get_random_id
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 
-vk_session = vk_api.VkApi(token = os.getenv('tokenHeroku'))
+vk_session = vk_api.VkApi(token = os.environ['tokenHeroku'])
 longpoll = VkBotLongPoll(vk_session, 193102999)
 vk = vk_session.get_api()
 
