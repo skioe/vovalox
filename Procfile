@@ -1,1 +1,1 @@
-worker: python vovapid.py
+worker: python main.py
