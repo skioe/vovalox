@@ -21,6 +21,13 @@ longpoll = VkBotLongPoll(vk_session, group_id=group_id)
 upload = VkUpload(vk_session)
 vk = vk_session.get_api()
 
+database = json.load(open("persons.json"))
+for key in database:
+    name = database[key]['name']
+    lst = [img for img in os.listdir("images") if img.startswith(name)]
+    database[key]["images"] = lst
+
+
 
 def main():
     for event in longpoll.listen():
