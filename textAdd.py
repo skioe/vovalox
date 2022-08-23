@@ -1,9 +1,6 @@
-from json import load
+import textwrap
 from PIL import Image, ImageFont
 from pilmoji import Pilmoji
-import textwrap
-
-database = load(open("persons.json"))
 
 
 def make_image(text, in_image, out_image):
