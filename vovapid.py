@@ -1,5 +1,6 @@
 import vk_api
 import random
+import os
 
 from vk_api.utils import get_random_id
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
