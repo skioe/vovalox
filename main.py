@@ -9,11 +9,15 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from textAdd import make_image, database
 from config import TOKEN, GROUP_ID
 
-token = os.environ['ACCESS_TOKEN'] if os.environ['ACCESS_TOKEN'] else token = TOKEN
-group_id = os.environ['GROUP_ID'] if os.environ['GROUP_ID'] else group_id = GROUP_ID
+try:
+    token = os.environ['ACCESS_TOKEN']
+    group_id = os.environ['GROUP_ID']
+except KeyError:
+    token = TOKEN
+    group_id = GROUP_ID
 
 vk_session = vk_api.VkApi(token=token)
-longpoll = VkBotLongPoll(vk_session, os.environ['GROUP_ID'])
+longpoll = VkBotLongPoll(vk_session, group_id=group_id)
 upload = VkUpload(vk_session)
 vk = vk_session.get_api()
 
