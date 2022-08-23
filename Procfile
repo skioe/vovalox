@@ -1,0 +1,1 @@
+worker: python vovapid.py
