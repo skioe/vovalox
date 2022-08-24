@@ -75,10 +75,16 @@ def main():
 
             if first_word == "!status":
                 target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
-                send_message(vk,
-                             event.chat_id,
-                             f"@id{target_person} (Юзер) - {database[target_person]['status']}!",
-                             None)
+                if target_person in database.keys():
+                    send_message(vk,
+                                 event.chat_id,
+                                 f"@id{target_person} (Юзер) - {database[target_person]['status']}!",
+                                 None)
+                if target_person not in database.keys():
+                    send_message(vk,
+                                 event.chat_id,
+                                 f"@id{target_person} (Юзера) нет в базе",
+                                 None)
 
 if __name__ == "__main__":
     main()
