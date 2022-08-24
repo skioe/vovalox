@@ -1,14 +1,14 @@
 import vk_api
-import random
 import os
-import re
 
 from vk_api import VkUpload
+from vk_api.utils import get_random_id
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 
-from textAdd import make_image, database, process_new_images
+from textAdd import database, process_new_images
 from config import TOKEN, GROUP_ID
-from statusManip import check_and_edit, send_message
+from statusManip import command_sender_check
+from attachments import build_attachments, upload_photo
 
 try:
     token = os.environ['ACCESS_TOKEN']
@@ -35,56 +35,42 @@ def main():
 
             msg_rec = event.message.text.lower()
             from_id = str(event.message['from_id'])
+            chat_id = event.chat_id
 
             first_word = msg_rec.split(" ")[0]
-            
+
             if from_id in database.keys() and first_word != "!chad" and first_word != "!virgin":
-                attachments = []
-
-                audio = database[from_id]['audio']
-                images_list = database[from_id].get("images", [])
-
-                if audio:
-                    attachments.append(audio)
-                if images_list:
-                    image = random.choice(images_list)
-                    out_image = f"temp_{image}"
-                    make_image(msg_rec, image, out_image)
-                    photo = upload.photo_messages(photos=f"temp_images/{out_image}")[0]
-                    attachments.append(
-                        f"photo{photo['owner_id']}_{photo['id']}"
-                    )
-
+                attachments = build_attachments(from_id, upload.photo_messages(upload_photo(from_id, msg_rec))[0])
                 send_message(
-                    vk,
-                    event.chat_id,
+                    chat_id,
                     None,
-                    attachments
+                    attachments=attachments
                 )
 
             if first_word == "!chad" or first_word == "!virgin":
-                if event.message['from_id'] != 121418529:
-                    send_message(vk,
-                                 event.chat_id,
-                                 "А еще че?",
-                                 None)
-                if event.message['from_id'] == 121418529:
-                    status = first_word[1:]
-                    target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
-                    check_and_edit(vk, target_person, event.chat_id, status)
+                status = first_word[1:]
+                send_message(
+                    chat_id=chat_id,
+                    message=command_sender_check(msg_rec, from_id, status),
+                    attachments=None
+                )
 
             if first_word == "!status":
-                target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
-                if target_person in database.keys():
-                    send_message(vk,
-                                 event.chat_id,
-                                 f"@id{target_person} (Юзер) - {database[target_person]['status']}!",
-                                 None)
-                if target_person not in database.keys():
-                    send_message(vk,
-                                 event.chat_id,
-                                 f"@id{target_person} (Юзера) нет в базе",
-                                 None)
+                send_message(
+                    chat_id=chat_id,
+                    message=command_sender_check(msg_rec, status_check=True),
+                    attachments=None
+                )
+
+
+def send_message(chat_id, message, attachments):
+    vk.messages.send(
+        random_id=get_random_id(),
+        chat_id=chat_id,
+        attachment=attachments,
+        message=message
+    )
+
 
 if __name__ == "__main__":
     main()

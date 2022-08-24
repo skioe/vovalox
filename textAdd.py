@@ -11,6 +11,11 @@ with open('persons.json') as load_database:
     database = load(load_database)
 
 
+def dump_db():
+    with open("persons.json", "w") as write_database:
+        dump(database, write_database, indent=4)
+
+
 def change_status(target_person, status):
     database[target_person]["status"] = status
     if status == "chad":
@@ -18,8 +23,7 @@ def change_status(target_person, status):
     if status == "virgin":
         database[target_person]["audio"] = "audio491457183_456242598"
 
-    with open("persons.json", "w") as write_database:
-        dump(database, write_database, indent=4)
+    dump_db()
 
     copyfile(f"images/{status}.jpg", f"images/{target_person}.jpg")
 
@@ -32,8 +36,7 @@ def add_new_person(user_id):
         "status": ""
     }
 
-    with open("persons.json", "w") as write_database:
-        dump(database, write_database, indent=4)
+    dump_db()
 
 
 def process_new_images():
@@ -43,16 +46,7 @@ def process_new_images():
                        img.startswith(name) and (img.endswith(".jpg") or img.endswith(".png"))]
         database[user_id]["images"] = images_list
 
-    with open("persons.json", "w") as write_database:
-        dump(database, write_database, indent=4)
-
-
-def find(pattern):
-    result = []
-    for file in os.listdir('images/'):
-        if fnmatch.fnmatch(file, pattern):
-            result.append(file)
-    return result
+    dump_db()
 
 
 def make_image(text, in_image, out_image):
