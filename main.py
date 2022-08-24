@@ -37,25 +37,7 @@ def main():
             from_id = str(event.message['from_id'])
 
             first_word = msg_rec.split(" ")[0]
-
-            if first_word == "!chad" or first_word == "!virgin":
-                if event.message['from_id'] != 121418529:
-                    send_message(vk,
-                                 event.chat_id,
-                                 "А еще че?",
-                                 None)
-                if event.message['from_id'] == 121418529:
-                    status = first_word[1:]
-                    target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
-                    check_and_edit(vk, target_person, event.chat_id, status)
-
-            if first_word == "!status":
-                target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
-                send_message(vk,
-                             event.chat_id,
-                             f"@id{target_person} (Юзер) - {database[target_person]['status']}!",
-                             None)
-
+            
             if from_id in database.keys() and first_word != "!chad" and first_word != "!virgin":
                 attachments = []
 
@@ -80,6 +62,23 @@ def main():
                     attachments
                 )
 
+            if first_word == "!chad" or first_word == "!virgin":
+                if event.message['from_id'] != 121418529:
+                    send_message(vk,
+                                 event.chat_id,
+                                 "А еще че?",
+                                 None)
+                if event.message['from_id'] == 121418529:
+                    status = first_word[1:]
+                    target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
+                    check_and_edit(vk, target_person, event.chat_id, status)
+
+            if first_word == "!status":
+                target_person = " ".join(re.findall(r"\[id(\d*)\|.*]", msg_rec.split(' ')[1]))
+                send_message(vk,
+                             event.chat_id,
+                             f"@id{target_person} (Юзер) - {database[target_person]['status']}!",
+                             None)
 
 if __name__ == "__main__":
     main()
